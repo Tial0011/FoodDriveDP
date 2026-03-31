@@ -1,4 +1,4 @@
-// APP CONTAINER
+// CREATE APP
 const app = document.createElement("div");
 app.className = "app";
 document.body.appendChild(app);
@@ -20,27 +20,27 @@ const vendorInput = document.createElement("input");
 vendorInput.placeholder = "Stand Number";
 app.appendChild(vendorInput);
 
-// BUTTON AREA
+// BUTTON BOX
 const btnBox = document.createElement("div");
-btnBox.style.display = "flex";
-btnBox.style.gap = "10px";
-btnBox.style.marginTop = "20px";
-btnBox.style.justifyContent = "center";
+btnBox.className = "btnBox";
 app.appendChild(btnBox);
 
 // UPLOAD BUTTON
 const uploadBtn = document.createElement("button");
-uploadBtn.innerText = "Upload Photo";
+uploadBtn.innerText = "Upload";
+uploadBtn.className = "upload";
 btnBox.appendChild(uploadBtn);
 
-// DOWNLOAD
+// DOWNLOAD BUTTON
 const downloadBtn = document.createElement("button");
 downloadBtn.innerText = "Download";
+downloadBtn.className = "download";
 btnBox.appendChild(downloadBtn);
 
-// SHARE
+// SHARE BUTTON
 const shareBtn = document.createElement("button");
 shareBtn.innerText = "Share";
+shareBtn.className = "share";
 btnBox.appendChild(shareBtn);
 
 // FILE INPUT
@@ -52,19 +52,16 @@ document.body.appendChild(uploadInput);
 
 uploadBtn.onclick = () => uploadInput.click();
 
-// IMAGE SETTINGS
+// IMAGE VARIABLES
 let uploadedImage = null;
-let imgX = 100;
+let imgX = 70;
 let imgY = 120;
 let imgWidth = 400;
 let imgHeight = 300;
 
-// DRAG STATE
 let dragging = false;
 let startX = 0;
 let startY = 0;
-
-// PINCH STATE
 let pinchStartDistance = 0;
 
 // TEMPLATE
@@ -87,7 +84,7 @@ uploadInput.addEventListener("change", (e) => {
       imgWidth = 400;
       imgHeight = uploadedImage.height * (400 / uploadedImage.width);
 
-      imgX = 100;
+      imgX = 70;
       imgY = 120;
 
       drawCanvas();
@@ -97,7 +94,7 @@ uploadInput.addEventListener("change", (e) => {
   reader.readAsDataURL(file);
 });
 
-// TEXT LIVE UPDATE
+// LIVE TEXT UPDATE
 businessInput.addEventListener("input", drawCanvas);
 vendorInput.addEventListener("input", drawCanvas);
 
@@ -122,7 +119,6 @@ canvas.addEventListener("touchmove", (e) => {
 
   if (!uploadedImage) return;
 
-  // DRAG
   if (dragging && e.touches.length === 1) {
     let dx = e.touches[0].clientX - startX;
     let dy = e.touches[0].clientY - startY;
@@ -136,7 +132,6 @@ canvas.addEventListener("touchmove", (e) => {
     drawCanvas();
   }
 
-  // PINCH ZOOM
   if (e.touches.length === 2) {
     let newDistance = getDistance(e.touches[0], e.touches[1]);
 
@@ -191,7 +186,8 @@ function drawCanvas() {
 
   ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
 
-  const boxX = 150;
+  // PHOTO AREA (shifted left slightly)
+  const boxX = 110;
   const boxY = 120;
   const boxW = 300;
   const boxH = 250;
@@ -208,51 +204,31 @@ function drawCanvas() {
     ctx.restore();
   }
 
-  // TEXT
-  // =====================
-  // BUSINESS NAME
-  // =====================
+  // AUTO RESIZE BUSINESS NAME
+  let name = businessInput.value;
+  let fontSize = 50;
 
+  ctx.font = fontSize + "px Bebas Neue";
+
+  while (ctx.measureText(name).width > 500) {
+    fontSize--;
+    ctx.font = fontSize + "px Bebas Neue";
+  }
+
+  // BUSINESS NAME
   ctx.textAlign = "center";
   ctx.fillStyle = "#111";
-  ctx.font = "50px Bebas Neue";
+  ctx.fillText(name, 300, 430);
 
-  ctx.fillText(businessInput.value, 300, 420);
-
-  // =====================
-  // STAND NUMBER BOX
-  // =====================
-
-  const boxWidth = 320;
-  const boxHeight = 120;
-  const boxX = 300 - boxWidth / 2;
-  const boxY = 650;
-
-  // box background
-  ctx.fillStyle = "white";
-  ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
-
-  // border
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "#2ecc71";
-  ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
-
-  // =====================
   // STAND LABEL
-  // =====================
+  ctx.fillStyle = "#666";
+  ctx.font = "22px Poppins";
+  ctx.fillText("STAND NO", 300, 720);
 
-  ctx.fillStyle = "#555";
-  ctx.font = "20px Montserrat";
-  ctx.fillText("STAND NO", 300, 685);
-
-  // =====================
   // STAND NUMBER
-  // =====================
-
   ctx.fillStyle = "#2ecc71";
-  ctx.font = "bold 50px Montserrat";
-
-  ctx.fillText(vendorInput.value, 300, 735);
+  ctx.font = "bold 70px Poppins";
+  ctx.fillText(vendorInput.value, 300, 780);
 }
 
 // DOWNLOAD
@@ -260,7 +236,6 @@ downloadBtn.onclick = () => {
   const link = document.createElement("a");
 
   link.download = "tradefair-dp.png";
-
   link.href = canvas.toDataURL("image/png");
 
   link.click();
@@ -276,7 +251,7 @@ shareBtn.onclick = async () => {
 
   if (navigator.share) {
     navigator.share({
-      title: "My Trade Fair DP",
+      title: "Trade Fair DP",
       files: [file],
     });
   } else {
