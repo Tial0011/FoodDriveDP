@@ -209,16 +209,50 @@ function drawCanvas() {
   }
 
   // TEXT
+  // =====================
+  // BUSINESS NAME
+  // =====================
+
   ctx.textAlign = "center";
   ctx.fillStyle = "#111";
+  ctx.font = "50px Bebas Neue";
 
-  // BUSINESS NAME
-  ctx.font = "48px Bebas Neue";
-  ctx.fillText(businessInput.value, 300, 410);
+  ctx.fillText(businessInput.value, 300, 420);
 
+  // =====================
+  // STAND NUMBER BOX
+  // =====================
+
+  const boxWidth = 320;
+  const boxHeight = 120;
+  const boxX = 300 - boxWidth / 2;
+  const boxY = 650;
+
+  // box background
+  ctx.fillStyle = "white";
+  ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+  // border
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#2ecc71";
+  ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+  // =====================
+  // STAND LABEL
+  // =====================
+
+  ctx.fillStyle = "#555";
+  ctx.font = "20px Montserrat";
+  ctx.fillText("STAND NO", 300, 685);
+
+  // =====================
   // STAND NUMBER
-  ctx.font = "700 28px Montserrat";
-  ctx.fillText("Stand No: " + vendorInput.value, 300, 760);
+  // =====================
+
+  ctx.fillStyle = "#2ecc71";
+  ctx.font = "bold 50px Montserrat";
+
+  ctx.fillText(vendorInput.value, 300, 735);
 }
 
 // DOWNLOAD
