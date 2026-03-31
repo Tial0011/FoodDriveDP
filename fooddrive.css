@@ -1,67 +1,74 @@
-body {
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: Arial;
-  background: #f3f4f6;
+  padding: 0;
+}
+
+body {
+  font-family: "Garamond ", sans-serif;
+  background: #f4f6fb;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .app {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
   width: 420px;
-}
-
-.dp-container {
-  position: relative;
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
 
 canvas {
   width: 100%;
-  display: block;
-}
-
-.upload-area {
-  position: absolute;
-  top: 120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 200px;
-  border: 2px dashed white;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
 }
 
 input {
   width: 100%;
-  padding: 12px;
-  margin-top: 15px;
+  padding: 14px;
+  margin-top: 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #ff6b2c;
 }
 
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 15px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 10px;
-  background: #1b5e20;
-  color: white;
-  font-weight: bold;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #2e7d32;
+  transform: translateY(-2px);
+}
+
+button:nth-child(1) {
+  background: #ff6b2c;
+  color: white;
+}
+
+button:nth-child(2) {
+  background: #111;
+  color: white;
+}
+
+button:nth-child(3) {
+  background: #2ecc71;
+  color: white;
 }

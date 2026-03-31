@@ -3,33 +3,13 @@ const app = document.createElement("div");
 app.className = "app";
 document.body.appendChild(app);
 
-// DP CONTAINER
-const dpContainer = document.createElement("div");
-dpContainer.className = "dp-container";
-app.appendChild(dpContainer);
-
 // CANVAS
 const canvas = document.createElement("canvas");
 canvas.width = 600;
 canvas.height = 800;
-dpContainer.appendChild(canvas);
+app.appendChild(canvas);
 
 const ctx = canvas.getContext("2d");
-
-// UPLOAD AREA
-const uploadArea = document.createElement("div");
-uploadArea.className = "upload-area";
-uploadArea.innerText = "Upload Photo";
-dpContainer.appendChild(uploadArea);
-
-// FILE INPUT
-const uploadInput = document.createElement("input");
-uploadInput.type = "file";
-uploadInput.accept = "image/*";
-uploadInput.style.display = "none";
-document.body.appendChild(uploadInput);
-
-uploadArea.onclick = () => uploadInput.click();
 
 // INPUTS
 const businessInput = document.createElement("input");
@@ -44,24 +24,36 @@ app.appendChild(vendorInput);
 const btnBox = document.createElement("div");
 btnBox.style.display = "flex";
 btnBox.style.gap = "10px";
-btnBox.style.marginTop = "15px";
+btnBox.style.marginTop = "20px";
+btnBox.style.justifyContent = "center";
 app.appendChild(btnBox);
 
-const previewBtn = document.createElement("button");
-previewBtn.innerText = "Preview";
-btnBox.appendChild(previewBtn);
+// UPLOAD BUTTON
+const uploadBtn = document.createElement("button");
+uploadBtn.innerText = "Upload Photo";
+btnBox.appendChild(uploadBtn);
 
+// DOWNLOAD
 const downloadBtn = document.createElement("button");
 downloadBtn.innerText = "Download";
 btnBox.appendChild(downloadBtn);
 
+// SHARE
 const shareBtn = document.createElement("button");
 shareBtn.innerText = "Share";
 btnBox.appendChild(shareBtn);
 
+// FILE INPUT
+const uploadInput = document.createElement("input");
+uploadInput.type = "file";
+uploadInput.accept = "image/*";
+uploadInput.style.display = "none";
+document.body.appendChild(uploadInput);
+
+uploadBtn.onclick = () => uploadInput.click();
+
 // IMAGE SETTINGS
 let uploadedImage = null;
-
 let imgX = 100;
 let imgY = 120;
 let imgWidth = 400;
@@ -105,20 +97,16 @@ uploadInput.addEventListener("change", (e) => {
   reader.readAsDataURL(file);
 });
 
-// LIVE TEXT UPDATE
+// TEXT LIVE UPDATE
 businessInput.addEventListener("input", drawCanvas);
 vendorInput.addEventListener("input", drawCanvas);
 
-// ------------------
-// TOUCH DRAG
-// ------------------
-
+// TOUCH START
 canvas.addEventListener("touchstart", (e) => {
   if (!uploadedImage) return;
 
   if (e.touches.length === 1) {
     dragging = true;
-
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
   }
@@ -128,6 +116,7 @@ canvas.addEventListener("touchstart", (e) => {
   }
 });
 
+// TOUCH MOVE
 canvas.addEventListener("touchmove", (e) => {
   e.preventDefault();
 
@@ -162,14 +151,9 @@ canvas.addEventListener("touchmove", (e) => {
   }
 });
 
-canvas.addEventListener("touchend", () => {
-  dragging = false;
-});
+canvas.addEventListener("touchend", () => (dragging = false));
 
-// ------------------
-// DESKTOP DRAG (optional)
-// ------------------
-
+// DESKTOP DRAG
 canvas.addEventListener("mousedown", (e) => {
   dragging = true;
   startX = e.offsetX;
@@ -193,10 +177,7 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("mouseup", () => (dragging = false));
 
-// ------------------
-// DISTANCE FOR PINCH
-// ------------------
-
+// PINCH DISTANCE
 function getDistance(p1, p2) {
   let dx = p1.clientX - p2.clientX;
   let dy = p1.clientY - p2.clientY;
@@ -204,10 +185,7 @@ function getDistance(p1, p2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-// ------------------
 // DRAW CANVAS
-// ------------------
-
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -232,18 +210,16 @@ function drawCanvas() {
 
   // TEXT
   ctx.textAlign = "center";
-  ctx.fillStyle = "black";
-  ctx.font = "bold 32px Arial";
+  ctx.fillStyle = "#111";
 
+  // BUSINESS NAME
+  ctx.font = "48px Bebas Neue";
   ctx.fillText(businessInput.value, 300, 410);
 
-  ctx.font = "bold 26px Arial";
-
+  // STAND NUMBER
+  ctx.font = "700 28px Montserrat";
   ctx.fillText("Stand No: " + vendorInput.value, 300, 760);
 }
-
-// PREVIEW
-previewBtn.onclick = drawCanvas;
 
 // DOWNLOAD
 downloadBtn.onclick = () => {
