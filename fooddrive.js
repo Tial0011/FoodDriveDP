@@ -31,12 +31,11 @@ document.body.appendChild(uploadInput);
 
 uploadArea.onclick = () => uploadInput.click();
 
-// BUSINESS INPUT
+// INPUTS
 const businessInput = document.createElement("input");
 businessInput.placeholder = "Business Name";
 app.appendChild(businessInput);
 
-// STAND INPUT
 const vendorInput = document.createElement("input");
 vendorInput.placeholder = "Stand Number";
 app.appendChild(vendorInput);
@@ -48,17 +47,14 @@ btnBox.style.gap = "10px";
 btnBox.style.marginTop = "15px";
 app.appendChild(btnBox);
 
-// PREVIEW BUTTON
 const previewBtn = document.createElement("button");
 previewBtn.innerText = "Preview";
 btnBox.appendChild(previewBtn);
 
-// DOWNLOAD BUTTON
 const downloadBtn = document.createElement("button");
 downloadBtn.innerText = "Download";
 btnBox.appendChild(downloadBtn);
 
-// SHARE BUTTON
 const shareBtn = document.createElement("button");
 shareBtn.innerText = "Share";
 btnBox.appendChild(shareBtn);
@@ -66,17 +62,20 @@ btnBox.appendChild(shareBtn);
 // IMAGE SETTINGS
 let uploadedImage = null;
 
-let imgX = 0;
-let imgY = 0;
-let imgWidth = 0;
-let imgHeight = 0;
+let imgX = 100;
+let imgY = 120;
+let imgWidth = 400;
+let imgHeight = 300;
 
-// DRAG SETTINGS
+// DRAG STATE
 let dragging = false;
 let startX = 0;
 let startY = 0;
 
-// TEMPLATE IMAGE
+// PINCH STATE
+let pinchStartDistance = 0;
+
+// TEMPLATE
 const template = new Image();
 template.src = "FoodDrive.jpg";
 template.onload = drawCanvas;
@@ -93,7 +92,6 @@ uploadInput.addEventListener("change", (e) => {
     uploadedImage.src = reader.result;
 
     uploadedImage.onload = () => {
-      // AUTO FIT IMAGE
       imgWidth = 400;
       imgHeight = uploadedImage.height * (400 / uploadedImage.width);
 
@@ -107,22 +105,77 @@ uploadInput.addEventListener("change", (e) => {
   reader.readAsDataURL(file);
 });
 
-// TEXT LIVE UPDATE
+// LIVE TEXT UPDATE
 businessInput.addEventListener("input", drawCanvas);
 vendorInput.addEventListener("input", drawCanvas);
 
-// DRAG START
-canvas.addEventListener("mousedown", (e) => {
+// ------------------
+// TOUCH DRAG
+// ------------------
+
+canvas.addEventListener("touchstart", (e) => {
   if (!uploadedImage) return;
 
+  if (e.touches.length === 1) {
+    dragging = true;
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }
+
+  if (e.touches.length === 2) {
+    pinchStartDistance = getDistance(e.touches[0], e.touches[1]);
+  }
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+
+  if (!uploadedImage) return;
+
+  // DRAG
+  if (dragging && e.touches.length === 1) {
+    let dx = e.touches[0].clientX - startX;
+    let dy = e.touches[0].clientY - startY;
+
+    imgX += dx;
+    imgY += dy;
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+
+    drawCanvas();
+  }
+
+  // PINCH ZOOM
+  if (e.touches.length === 2) {
+    let newDistance = getDistance(e.touches[0], e.touches[1]);
+
+    let scale = newDistance / pinchStartDistance;
+
+    imgWidth *= scale;
+    imgHeight *= scale;
+
+    pinchStartDistance = newDistance;
+
+    drawCanvas();
+  }
+});
+
+canvas.addEventListener("touchend", () => {
+  dragging = false;
+});
+
+// ------------------
+// DESKTOP DRAG (optional)
+// ------------------
+
+canvas.addEventListener("mousedown", (e) => {
   dragging = true;
   startX = e.offsetX;
   startY = e.offsetY;
-
-  canvas.style.cursor = "grabbing";
 });
 
-// DRAG MOVE
 canvas.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
@@ -138,34 +191,23 @@ canvas.addEventListener("mousemove", (e) => {
   drawCanvas();
 });
 
-// DRAG END
-canvas.addEventListener("mouseup", () => {
-  dragging = false;
-  canvas.style.cursor = "grab";
-});
+canvas.addEventListener("mouseup", () => (dragging = false));
 
-canvas.addEventListener("mouseleave", () => {
-  dragging = false;
-  canvas.style.cursor = "grab";
-});
+// ------------------
+// DISTANCE FOR PINCH
+// ------------------
 
-canvas.style.cursor = "grab";
+function getDistance(p1, p2) {
+  let dx = p1.clientX - p2.clientX;
+  let dy = p1.clientY - p2.clientY;
 
-// ZOOM FEATURE
-canvas.addEventListener("wheel", (e) => {
-  if (!uploadedImage) return;
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
-  e.preventDefault();
+// ------------------
+// DRAW CANVAS
+// ------------------
 
-  let scale = e.deltaY < 0 ? 1.05 : 0.95;
-
-  imgWidth *= scale;
-  imgHeight *= scale;
-
-  drawCanvas();
-});
-
-// DRAW FUNCTION
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -188,14 +230,13 @@ function drawCanvas() {
     ctx.restore();
   }
 
-  // BUSINESS NAME
+  // TEXT
   ctx.textAlign = "center";
   ctx.fillStyle = "black";
   ctx.font = "bold 32px Arial";
 
   ctx.fillText(businessInput.value, 300, 410);
 
-  // STAND NUMBER
   ctx.font = "bold 26px Arial";
 
   ctx.fillText("Stand No: " + vendorInput.value, 300, 760);
