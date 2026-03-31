@@ -56,7 +56,7 @@ uploadBtn.onclick = () => uploadInput.click();
 let uploadedImage = null;
 let imgX = 70;
 let imgY = 120;
-let imgWidth = 400;
+let imgWidth = 500;
 let imgHeight = 300;
 
 let dragging = false;
@@ -66,7 +66,7 @@ let pinchStartDistance = 0;
 
 // TEMPLATE
 const template = new Image();
-template.src = "FoodDrive.jpg";
+template.src = "foodDrive.jpg";
 template.onload = drawCanvas;
 
 // IMAGE UPLOAD
@@ -187,11 +187,14 @@ function drawCanvas() {
   ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
 
   // PHOTO AREA (shifted left slightly)
-  const boxX = 110;
-  const boxY = 120;
   const boxW = 300;
   const boxH = 250;
 
+  // CENTER THE FRAME HORIZONTALLY
+  const boxX = (canvas.width - boxW) / 2;
+
+  // POSITION FROM TOP
+  const boxY = 120;
   if (uploadedImage) {
     ctx.save();
 
@@ -258,3 +261,26 @@ shareBtn.onclick = async () => {
     alert("Sharing not supported on this browser");
   }
 };
+// INSTRUCTIONS PANEL
+const instructions = document.createElement("div");
+instructions.className = "instructions";
+
+instructions.innerHTML = `
+<h3>How to Use</h3>
+
+<div><span>Upload</span> – Upload your picture.</div>
+
+<div><span>Drag</span> – Move your picture around inside the frame.</div>
+
+<div><span>Pinch / Scroll</span> – Resize the image.</div>
+
+<div><span>Business Name</span> – Enter your brand name.</div>
+
+<div><span>Stand Number</span> – Enter your trade fair stand number.</div>
+
+<div><span>Download</span> – Save your final DP image.</div>
+
+<div><span>Share</span> – Share the DP directly.</div>
+`;
+
+app.appendChild(instructions);
